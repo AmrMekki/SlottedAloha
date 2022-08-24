@@ -15,58 +15,51 @@ def RandomStatus(n):
 
 efficiency = []
 numOfNodes = 50
+AveragingNum = 50
 
 for i in range(1, numOfNodes):
     countSuccess=0
     countCollision=0
     countEmpty=0
     listOfNodes = []
-    for j in range(i):
-        listOfNodes.append( Node(j+1))
-    NumOfSlots = 100000
-    for k in range(NumOfSlots):
-        NumTrue = 0
-        for node in listOfNodes:
-            if(node.numOfPackets!=0):
-                node.transmitStatus = RandomStatus(i)
-            # print(node.num, node.transmitStatus, node.numOfPackets)
-            if(node.transmitStatus==True):
-                NumTrue+=1
-        if(NumTrue==0):
-            # print("Empty")
-            countEmpty+=1
-        elif(NumTrue==1):
+    AveragingEff = 0
+    for j in range(AveragingNum):
+        for j in range(i):
+            listOfNodes.append( Node(j+1))
+        NumOfSlots = 100000
+        for k in range(NumOfSlots):
+            NumTrue = 0
             for node in listOfNodes:
+                if(node.numOfPackets!=0):
+                    node.transmitStatus = RandomStatus(i)
+                # print(node.num, node.transmitStatus, node.numOfPackets)
                 if(node.transmitStatus==True):
-                    node.numOfPackets-=1
-                    node.transmitStatus=False
-            # print("Success")
-            countSuccess+=1
-        else:
-            # print("Collision")
-            countCollision+=1
-        if(countSuccess == len(listOfNodes)):
-            # print(len(listOfNodes))
-            NumOfSlots=countSuccess+countEmpty+countCollision
-            # print(i)
-            break
+                    NumTrue+=1
+            if(NumTrue==0):
+                # print("Empty")
+                countEmpty+=1
+            elif(NumTrue==1):
+                for node in listOfNodes:
+                    if(node.transmitStatus==True):
+                        node.numOfPackets-=1
+                        node.transmitStatus=False
+                # print("Success")
+                countSuccess+=1
+            else:
+                # print("Collision")
+                countCollision+=1
+            if(countSuccess == len(listOfNodes)):
+                # print(len(listOfNodes))
+                NumOfSlots=countSuccess+countEmpty+countCollision
+                # print(i)
+                break
+        AveragingEff += (countSuccess/NumOfSlots)
     print(i)
     # plt.plot(i,countSuccess/NumOfSlots)
-    print("Success:",countSuccess, "Collision",countCollision, "Empty", countEmpty)
-    print("Efficiency", countSuccess/NumOfSlots)
-    efficiency.append(countSuccess/NumOfSlots)
+    # print("Success:",countSuccess, "Collision",countCollision, "Empty", countEmpty)
+    # print("Efficiency", countSuccess/NumOfSlots)
+    efficiency.append(AveragingEff/AveragingNum)
 
-# efficiency
-# print(countSuccess)
-# print(countSuccess)
-# print(NumOfSlots)
-
-# plt.xlabel("# of Nodes")
-# plt.ylabel("Slot Efficiency")
-# plt.legend(['W = 8', 'W = 16', 'W = 32'], loc='upper right')
-# plt.axis([0, 32, 0, 1])
-# plt.grid(linestyle='--')
-# # plt.show()
 
 sum = 0
 for s in efficiency:
@@ -88,8 +81,6 @@ plt.xlabel('Node - axis')
 # naming the y axis
 plt.ylabel('Efficiency - axis')
 plt.axis([1, numOfNodes, 0, 1])
-# giving a title to my graph
-# plt.title('My first graph!')
 plt.grid(linestyle='--') 
 # function to show the plot
 plt.show()
